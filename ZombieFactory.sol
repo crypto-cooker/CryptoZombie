@@ -8,9 +8,14 @@ contract ZombieFactory {
         uint dna;
     }
     Zombie[] public zombies;
-
-    function _createZombie(string memory _name, uint _dna) private {
-        zombies.push(Zombie(_name, _dna));
+    event NewZombie(uint zombieId, string name, uint dna);
+    mapping (uint => address) public zombieToOwner;
+    mapping (address => uint) ownerZombieCount;
+    function _createZombie(string memory _name, uint _dna) internal {
+        uint id = zombies.push(Zombie(_name, _dna))-1;
+        zombieToOwner[id] = msg.sender;
+        ownerZombieCount[msg.sender]++;
+        emit NewZombie(id, _name, _dna);
     }
 
     function _generateRandomDna(string memory _str) private view returns (uint) {
@@ -18,7 +23,9 @@ contract ZombieFactory {
         return rand % dnaModulus;
     }
     function createRandomZombie(string memory _name) public {
+        require(ownerZombieCount[msg.sender]==0);
         uint randDna = _generateRandomDna(_name);
         _createZombie(_name, randDna);
     }
 }
+
