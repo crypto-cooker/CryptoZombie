@@ -10,7 +10,7 @@ contract ZombieFactory is Ownable {
         string name;
         uint dna;
         uint32 level;
-        uint32 levelTime;
+        uint32 readyTime;
     }
     Zombie[] public zombies;
     event NewZombie(uint zombieId, string name, uint dna);
